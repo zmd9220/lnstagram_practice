@@ -97,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
                 if(task.isSuccessful)
                 {
                     moveMainPage(task.result?.user)
-                    //Login
+                    //Login page
                 }
                 else
                 {

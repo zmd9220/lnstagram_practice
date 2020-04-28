@@ -63,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 else
                 {
-                    //Show the error message
+                    //Show the error messages
                     Toast.makeText(this,task.exception?.message,Toast.LENGTH_LONG).show()
                 }
             }

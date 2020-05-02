@@ -89,15 +89,14 @@ class LoginActivity : AppCompatActivity() {
         LoginManager.getInstance()
             .registerCallback(callbackManager,object : FacebookCallback<LoginResult>{
                 override fun onSuccess(result: LoginResult?) {
+                    // second step
                     handleFacebookAccessToken(result?.accessToken) // 성공 했을 때 파이어베이스로 페이스북 데이터를 넘기는 부분
                 }
 
                 override fun onCancel() {
-                    TODO("Not yet implemented")
                 }
 
                 override fun onError(error: FacebookException?) {
-                    TODO("Not yet implemented")
                 }
 
             })//로그인 성공했을 때 넘어오는 부분
@@ -107,8 +106,9 @@ class LoginActivity : AppCompatActivity() {
         auth?.signInWithCredential(credential) // 여기는 구글과 같음
             ?.addOnCompleteListener {
                     task ->
-                if(task.isSuccessful)
+                if(task.isSuccessful) //응답 값을 받아서 페이지로 이동시키는 부분(3단계)
                 {
+                    // third step
                     moveMainPage(task.result?.user)
                     //Login page makes
                 }

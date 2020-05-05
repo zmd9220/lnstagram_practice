@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Howlstagram</string>
-    <string name="facebook_app_id">225493165542804</string> <string name="fb_login_protocol_scheme">fb225493165542804</string>
+    <string name="facebook_app_id">225493165542804</string>
+    <string name="fb_login_protocol_scheme">fb225493165542804</string>
 
 
     <!-- Sign In -->
@@ -50,6 +51,6 @@
     <string name="back">Back</string>
 
     <!-- etc -->
-    <item name="visible" type="id"/>
-    <item name="masked" type="id"/>
+    <item name="visible" type="id" />
+    <item name="masked" type="id" />
 </resources>

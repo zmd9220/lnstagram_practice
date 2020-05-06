@@ -8,9 +8,11 @@ import android.os.Bundle
 import android.widget.Toast
 import com.example.byeongjinan.howlstagram.R
 import com.example.byeongjinan.howlstagram.navigation.model.ContentDTO
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_add_photo.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -65,35 +67,79 @@ class AddPhotoActivity : AppCompatActivity() {
 
         var storageRef = storage?.reference?.child("images")?.child(imageFileName) //폴더명
 
-
         //FileUpload
         // 성공시 토스트(화면에 성공탭 잠깐 떴다 사라지는 거) !!-null satefy제거? (6장)
 //        storageRef?.putFile(photoUri!!)?.addOnSuccessListener {
 //            Toast.makeText(this,getString(R.string.upload_success),Toast.LENGTH_LONG).show()
 //        }
-        // 데이터 베이스를 입력해줄 코드를 넣어주기 Callback method (7장)
-        storageRef?.putFile(photoUri!!)?.addOnSuccessListener {
-            // 이미지 업로드 완료 됐으면 이미지 다운로드 주소를 받아오는 코드
-            storageRef.downloadUrl.addOnSuccessListener { uri ->
-                // 주소를 받아오자 마자 데이터 모델을 만들기
-                var contentDTO = ContentDTO()
 
-                // Insert downloadURI of image
-                contentDTO.imageURL = uri.toString()
+        // 업로드 방식에는 두 가지 방법이 있음 1. 프로미스 2. 콜백 둘 중 가독성이 좋거나 쓰기 편한거 쓰면 됨
+        // 구글에선 프로미스 방식을 권장
 
-                // Insert uid of user
-                contentDTO.uid = auth?.currentUser?.uid
+        // Promise method
+        storageRef?.putFile(photoUri!!)?.continueWithTask { task: Task<UploadTask.TaskSnapshot> ->
+            return@continueWithTask storageRef.downloadUrl
+        }?.addOnSuccessListener { uri ->
+            // 주소를 받아오자 마자 데이터 모델을 만들기
+            var contentDTO = ContentDTO()
 
-                // Insert userID
-                contentDTO.userID = auth?.currentUser?.email
+            // Insert downloadURI of image
+            contentDTO.imageURL = uri.toString()
 
-                // Insert explain of content 내용 설명 사용자 입력글과 설명글이 들어감
-                contentDTO.explain = addphoto_edit_explain.text.toString()
+            // Insert uid of user
+            contentDTO.uid = auth?.currentUser?.uid
 
-                // Insert timestamp 밀리세컨드
-                contentDTO.timestamp = System.currentTimeMillis()
-            }
+            // Insert userID
+            contentDTO.userID = auth?.currentUser?.email
+
+            // Insert explain of content 내용 설명 사용자 입력글과 설명글이 들어감
+            contentDTO.explain = addphoto_edit_explain.text.toString()
+
+            // Insert timestamp 밀리세컨드
+            contentDTO.timestamp = System.currentTimeMillis()
+
+            // contentDTO를 firestore에 images라는 컬렉션에다가 문서로 집어넣기
+            firestore?.collection("images")?.document()?.set(contentDTO)
+
+            // 결과가 정상으로 끝났음을 표시 (정상적으로 끝났고 닫혔다라는 플래그 값을 넘기기 위해서 사용)
+            setResult(Activity.RESULT_OK)
+
+            // 닫기
+            finish()
         }
+
+        // 데이터 베이스를 입력해줄 코드를 넣어주기 Callback method (7장)
+//        storageRef?.putFile(photoUri!!)?.addOnSuccessListener {
+//            // 이미지 업로드 완료 됐으면 이미지 다운로드 주소를 받아오는 코드
+//            storageRef.downloadUrl.addOnSuccessListener { uri ->
+//                // 주소를 받아오자 마자 데이터 모델을 만들기
+//                var contentDTO = ContentDTO()
+//
+//                // Insert downloadURI of image
+//                contentDTO.imageURL = uri.toString()
+//
+//                // Insert uid of user
+//                contentDTO.uid = auth?.currentUser?.uid
+//
+//                // Insert userID
+//                contentDTO.userID = auth?.currentUser?.email
+//
+//                // Insert explain of content 내용 설명 사용자 입력글과 설명글이 들어감
+//                contentDTO.explain = addphoto_edit_explain.text.toString()
+//
+//                // Insert timestamp 밀리세컨드
+//                contentDTO.timestamp = System.currentTimeMillis()
+//
+//                // contentDTO를 firestore에 images라는 컬렉션에다가 문서로 집어넣기
+//                firestore?.collection("images")?.document()?.set(contentDTO)
+//
+//                // 결과가 정상으로 끝났음을 표시 (정상적으로 끝났고 닫혔다라는 플래그 값을 넘기기 위해서 사용)
+//                setResult(Activity.RESULT_OK)
+//
+//                // 닫기
+//                finish()
+//            }
+//        }
     }
 
 }

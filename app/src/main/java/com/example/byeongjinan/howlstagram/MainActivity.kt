@@ -21,6 +21,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         // 6장 사진 업로드 할때 필요한 권한인 파일을 읽어올 수 있는 권한 얻기
         ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),1)
+
+        // 8장 메인 화면을 띄우면 DetailViewFragment가 맨 먼저 나올 수 있도록(메인 화면 디폴트) 설정(Default)
+        bottom_navigation.selectedItemId = R.id.action_home
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {

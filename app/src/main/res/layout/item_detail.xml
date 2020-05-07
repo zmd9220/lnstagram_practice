@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--상세 페이지에서 사용 할 수 있는 아이템 디자인 만들기 8강-->
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+    <!--        누가 업로드 했는지 표현하는 부분-->
+    <ImageView
+        android:id="@+id/detailviewitem_profile_image"
+        android:src="@mipmap/ic_launcher"
+        android:layout_margin="7.5dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"/>
+<!--    업로드 한 유저의 이름을 표현할 부분-->
+    <TextView
+            android:text="User_name"
+            android:id="@+id/detailviewitem_profile_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+</LinearLayout>
+<!--    컨텐츠 표시해주는 이미지 뷰-->
+    <ImageView
+            android:id="@+id/detailviewitem_imageview_content"
+            android:scaleType="fitXY"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"/>
+    <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+<!--        좋아요나 덧글달기 부분 담아두는 레이아웃-->
+        <ImageView
+                android:id="@+id/detailviewitem_favorite_imageview"
+                android:src="@drawable/ic_favorite_border"
+                android:layout_width="35dp"
+                android:layout_height="35dp"/>
+<!--        덧글 이미지뷰-->
+        <ImageView
+                android:id="@+id/detailviewitem_comment_imageview"
+                android:src="@drawable/ic_chat_black"
+                android:layout_width="35dp"
+                android:layout_height="35dp"/>
+    </LinearLayout>
+<!--    Like(좋아요) 카운트 해주는 텍스트뷰 넣기-->
+    <TextView
+            android:id="@+id/detailviewitem_favoritecounter_textview"
+            android:text="like 0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+<!--설명 부분-->
+    <TextView
+            android:id="@+id/detailviewitem_explain_textview"
+            android:text="Explain content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+</LinearLayout>

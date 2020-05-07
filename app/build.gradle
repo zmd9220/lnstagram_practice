@@ -41,4 +41,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     // 4장 페북 로그인에서 페이스북 디벨로퍼와 연결시 사용함
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
+    // 8장 이미지 다운 받을 수 있는 이미지 로더 라이브러리
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
 }

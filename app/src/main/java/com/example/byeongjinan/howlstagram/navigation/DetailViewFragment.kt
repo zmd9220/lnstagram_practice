@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.byeongjinan.howlstagram.R
 import com.example.byeongjinan.howlstagram.navigation.model.ContentDTO
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.android.synthetic.main.item_detail.view.*
@@ -17,6 +18,7 @@ import kotlinx.android.synthetic.main.item_detail.view.*
 // 8장에서 만듬
 class DetailViewFragment : Fragment() {
     var firestore: FirebaseFirestore? = null // db 접근하기 위해 변수 선언
+    var uid : String? = null // uid 받아 오는 부분을 글로벌 변수로 사용 (공통으로) 9장 추가
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -24,6 +26,8 @@ class DetailViewFragment : Fragment() {
     ): View? {
         var view = LayoutInflater.from(activity).inflate(R.layout.fragment_detail, container, false)
         firestore = FirebaseFirestore.getInstance() // db 정보 얻기 초기화
+//        9장에서 만든 uid 전역 변수화
+        uid = FirebaseAuth.getInstance().currentUser?.uid
 
 //        클래스 완성이 끝나고 메인 함수에 리사이클러뷰의 설정(클래스에서 지정해놓음)과 레이아웃 매니저(화면을 세로로 배치)를 적용
         view.detailviewfragment_recyclerview.adapter = DetailViewRecyclerViewAdapter()
@@ -92,9 +96,50 @@ class DetailViewFragment : Fragment() {
             viewholder.detailviewitem_favoritecounter_textview.text =
                 "Likes " + contentDTOs!![position].favoriteCount
 
+            // This code is when the button is clicked (좋아요 버튼 누를 시 처리)
+            viewholder.detailviewitem_favorite_imageview.setOnClickListener {
+                favoriteEvent(position)
+            }
+            // This code is when the page is loaded 클릭 이벤트로만 끝나는 것이 아닌 좋아요 카운트와 하트가 색칠되거나 비게 되거나 이벤트를 구현
+            if(contentDTOs!![position].favorites.containsKey(uid)){
+                // This is like status 좋아요 누른 상태 (꽉찬 하트)
+                viewholder.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite)
+
+            }else{
+                // This is unlike status 좋아요 안 누른 상태(빈 하트)
+                viewholder.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite_border)
+
+            }
+
             // User ProfileImage 이미지이므로 다운로드 받아야함(글라이드 사용) 8장 기준으론 아직 로드할 부분(프로파일 이미지 담아 있는 부분)이 없으므로 유지
             Glide.with(holder.itemView.context).load(contentDTOs!![position].imageURL)
                 .into(viewholder.detailviewitem_profile_image)
+        }
+        // 9장 좋아요 버튼 만들고 이벤트 처리하기
+        fun favoriteEvent(position : Int){
+            // 내가 선택한 컨텐츠의 uid를 불러와서 보여주는 이벤트에 사용할 변수
+            var tsDoc = firestore?.collection("images")?.document(contentUidList[position])
+            // 데이터를 입력하기 위해선 트랜젝션을 불러와야함
+            firestore?.runTransaction { transaction ->
+                // 트랜젝션을 하기 위해 먼저 uid 값을 불러오기 -> 전역변수로 옮김
+//                var uid = FirebaseAuth.getInstance().currentUser?.uid
+                // 트랙젝션의 데이터를 contentDTO 모델로 캐스팅
+                var contentDTO = transaction.get(tsDoc!!).toObject(ContentDTO::class.java)
+
+                // if 문으로 좋아요 버튼을 이미 클릭 했을 경우와 안했을 경우로 나눠서 처리
+                if(contentDTO!!.favorites.containsKey(uid)){
+                    // 누른 경우 When the button is clicked 버튼이 눌려있는 걸 취소하는 기능
+                    contentDTO?.favoriteCount=contentDTO?.favoriteCount -1
+                    contentDTO?.favorites.remove(uid)
+
+                }else{
+                    // 안누른 경우 When the button is not clicked 클릭 되는 기능(좋아요 추가 되는 기능)추가
+                    contentDTO?.favoriteCount=contentDTO?.favoriteCount+1
+                    contentDTO?.favorites[uid!!] = true
+                }
+                // 트랜젝션한 결과를 서버에 전송
+                transaction.set(tsDoc,contentDTO)
+            }
         }
     }
 }

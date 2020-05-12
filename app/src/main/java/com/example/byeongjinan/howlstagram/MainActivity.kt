@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.byeongjinan.howlstagram.navigation.*
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
+        // 디폴트 값이 기본 아이템 리스트에서 사용하도록 위에 세팅 11
+        setToolbarDefault()
         when(p0.itemId){
             R.id.action_home->{
                 var detailViewFragment = DetailViewFragment()
@@ -63,5 +66,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
         }
         return false
+    }
+    // toolbar_username, toolbar_btn, toolbar_back 아이콘이나 뷰들을 기본적으로 보이지 않는 상태로 두기(필요한 곳에서만 등장)
+    fun setToolbarDefault(){
+        toolbar_username.visibility = View.GONE
+        toolbar_btn_back.visibility = View.GONE
+        toolbar_title_image.visibility = View.VISIBLE
     }
 }

@@ -49,6 +49,11 @@ class DetailViewFragment : Fragment() {
                 ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     contentDTOs.clear()
                     contentUidList.clear()
+
+                    // 사인 아웃시 파이어 베이스의 스냅샷에서 에러가 발생하여 앱이 크러쉬(강제종료)되는데 이를 방지하기 위해 넣음(11)
+                    // Sometimes, This code return null of querySnapshot when it signout
+                    if (querySnapshot == null) return@addSnapshotListener
+
                     // for문으로 스냅샷에 들어간 내용들을 하나하나 씩 읽어들이기
                     for (snapshot in querySnapshot!!.documents) {
                         //캐스팅하기 DTO방식으로
@@ -110,10 +115,21 @@ class DetailViewFragment : Fragment() {
                 viewholder.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite_border)
 
             }
+//            // User ProfileImage 이미지이므로 다운로드 받아야함(글라이드 사용) 8장 기준으론 아직 로드할 부분(프로파일 이미지 담아 있는 부분)이 없으므로 유지
+//            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageURL)
+//                .into(viewholder.detailviewitem_profile_image)
 
-            // User ProfileImage 이미지이므로 다운로드 받아야함(글라이드 사용) 8장 기준으론 아직 로드할 부분(프로파일 이미지 담아 있는 부분)이 없으므로 유지
-            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageURL)
-                .into(viewholder.detailviewitem_profile_image)
+            // This code is when the profile image is clicked 프로필 이미지 클릭 됐을 때 처리하기(상대방 정보 페이지로 넘어가도록) 11장
+            viewholder.detailviewitem_profile_image.setOnClickListener {
+                var fragment = UserFragment()
+                var bundle = Bundle()
+                bundle.putString("destinationUid",contentDTOs[position].uid)
+                bundle.putString("UserId",contentDTOs[position].userID)
+                fragment.arguments = bundle
+                activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_content,fragment)?.commit()
+            }
+
+
         }
         // 9장 좋아요 버튼 만들고 이벤트 처리하기
         fun favoriteEvent(position : Int){

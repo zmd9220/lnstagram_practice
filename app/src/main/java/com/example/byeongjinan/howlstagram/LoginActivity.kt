@@ -61,6 +61,12 @@ class LoginActivity : AppCompatActivity() {
 //        printHashKey()
         callbackManager = CallbackManager.Factory.create() // 선언
     }
+
+    override fun onStart() {
+        super.onStart()
+        moveMainPage(auth?.currentUser)
+    }
+
     fun printHashKey() {
         try {
             val info = packageManager.getPackageInfo(packageName,PackageManager.GET_SIGNATURES)
@@ -192,6 +198,8 @@ class LoginActivity : AppCompatActivity() {
     {
         if(user != null){
             startActivity(Intent(this, MainActivity::class.java))
+            // 로그인 액티비티가 꺼지면서 메인 액티비티가 등장하도록 종료 11장
+            finish()
         }
     }
 }

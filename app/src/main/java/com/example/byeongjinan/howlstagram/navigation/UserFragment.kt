@@ -1,5 +1,6 @@
 package com.example.byeongjinan.howlstagram.navigation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +13,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.byeongjinan.howlstagram.LoginActivity
+import com.example.byeongjinan.howlstagram.MainActivity
 import com.example.byeongjinan.howlstagram.R
 import com.example.byeongjinan.howlstagram.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_main.*
 
 import kotlinx.android.synthetic.main.fragment_user.view.*
-
+// 유저 프래그먼트로 내 계정에 대한 정보와 상대방의 계정에 대한 정보를 띄울 수 있음
 // 10장
 class UserFragment : Fragment() {
     // 프래그먼트에서 사용할 변수들을 전역변수로 선언
@@ -26,6 +30,8 @@ class UserFragment : Fragment() {
     var firestore : FirebaseFirestore? = null
     var uid : String? = null
     var auth : FirebaseAuth? = null
+    // 어떤 uid 인지 체크해서 내가 아닌 다른 아이디의 경우와 내 아이디 인 경우로 나눠서 처리 (11)
+    var currentUserUid : String? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,6 +42,32 @@ class UserFragment : Fragment() {
         uid = arguments?.getString("destinationUid")
         firestore = FirebaseFirestore.getInstance() // 초기화
         auth = FirebaseAuth.getInstance()
+        currentUserUid = auth?.currentUser?.uid
+
+        if(uid == currentUserUid){
+            // 내 아이디 인 경우
+            fragmentView?.account_btn_follow_signout?.text= getString(R.string.signout)
+            fragmentView?.account_btn_follow_signout?.setOnClickListener {
+                // 로그아웃이므로 액티비티 종료와 로그인 액티비티로 다시 넘어가도록(호출)
+                activity?.finish()
+                startActivity(Intent(activity,LoginActivity::class.java))
+                auth?.signOut()
+            }
+        }else{
+            // 다른 아이디
+            fragmentView?.account_btn_follow_signout?.text= getString(R.string.follow)
+            // 누구의 유저 페이지 인지 보여주는 텍스트뷰, 백버튼 활성화
+            var mainactivity = (activity as MainActivity)
+            mainactivity?.toolbar_username?.text = arguments?.getString("userId")
+            mainactivity?.toolbar_btn_back?.setOnClickListener{
+                // 뒤로가기
+                mainactivity.bottom_navigation.selectedItemId = R.id.action_home
+            }
+            // 툴바 이미지 로고를 숨기고
+            mainactivity?.toolbar_title_image?.visibility = View.GONE
+            // 아이디 표시 해줌(들어온 아이디)
+            mainactivity?.toolbar_username?.visibility = View.VISIBLE
+        }
 
         fragmentView?.account_recyclerview?.adapter = UserFragmentRecyclerViewAdapter()
         fragmentView?.account_recyclerview?.layoutManager = GridLayoutManager(activity!!,3) // 한 행에 3개 씩 뜰 수 있도록 그리드형식(격자무늬)

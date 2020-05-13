@@ -1,5 +1,6 @@
 package com.example.byeongjinan.howlstagram
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
@@ -9,8 +10,12 @@ import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.byeongjinan.howlstagram.navigation.*
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.jar.Manifest
 
@@ -72,5 +77,29 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         toolbar_username.visibility = View.GONE
         toolbar_btn_back.visibility = View.GONE
         toolbar_title_image.visibility = View.VISIBLE
+    }
+
+    // UserFragment에서 가져온 값대로 실행 (forResult) 12
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode == UserFragment.PICK_PROFILE_FROM_ALBUM && resultCode == Activity.RESULT_OK){
+            // 사진을 선택 했을 경우 처리해 주기
+            var imageUri = data?.data
+            var uid = FirebaseAuth.getInstance().currentUser?.uid
+            // 파이어 베이스 저장소에 유저 프로필 이미지 폴더 생성후 그 안에 uid 이름으로 저장하도록(이미지를)
+            var storageRef = FirebaseStorage.getInstance().reference.child("userProfileImages").child(uid!!)
+            // continueWithTask로 이미지 다운로드 주소를 얻고
+            storageRef.putFile(imageUri!!).continueWithTask { task: Task<UploadTask.TaskSnapshot> ->
+                return@continueWithTask storageRef.downloadUrl
+            }.addOnSuccessListener { uri ->
+                // 주소 얻는데 성공했으면
+                var map = HashMap<String,Any>() //
+                map["image"] = uri.toString() // 키값을 넣고
+                FirebaseFirestore.getInstance().collection("profileImages").document(uid).set(map)
+                // db에 넣는 절차
+            }
+
+        }
     }
 }

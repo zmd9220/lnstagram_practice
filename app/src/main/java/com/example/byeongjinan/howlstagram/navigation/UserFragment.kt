@@ -30,6 +30,10 @@ class UserFragment : Fragment() {
     var firestore : FirebaseFirestore? = null
     var uid : String? = null
     var auth : FirebaseAuth? = null
+    companion object {
+        // companion 코틀린에 없는 static 기능의 변수 선언시 대체 수단 12
+        var PICK_PROFILE_FROM_ALBUM = 10
+    }
     // 어떤 uid 인지 체크해서 내가 아닌 다른 아이디의 경우와 내 아이디 인 경우로 나눠서 처리 (11)
     var currentUserUid : String? = null
     override fun onCreateView(
@@ -43,6 +47,7 @@ class UserFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance() // 초기화
         auth = FirebaseAuth.getInstance()
         currentUserUid = auth?.currentUser?.uid
+
 
         if(uid == currentUserUid){
             // 내 아이디 인 경우
@@ -71,8 +76,29 @@ class UserFragment : Fragment() {
 
         fragmentView?.account_recyclerview?.adapter = UserFragmentRecyclerViewAdapter()
         fragmentView?.account_recyclerview?.layoutManager = GridLayoutManager(activity!!,3) // 한 행에 3개 씩 뜰 수 있도록 그리드형식(격자무늬)
+
+        // 프로필 사진 클릭시 이벤트 처리하는 버튼 이벤트 12
+        fragmentView?.account_iv_profile?.setOnClickListener {
+            var photoPickerIntent = Intent(Intent.ACTION_PICK)
+            photoPickerIntent.type = "image/*"
+            activity?.startActivityForResult(photoPickerIntent,PICK_PROFILE_FROM_ALBUM)
+        }
+        getProfileImage() // 이미지 주소 받아오기
         return fragmentView
     }
+    fun getProfileImage(){
+        // 올린 프로필 이미지를 다운받는 기능
+        firestore?.collection("profileImages")?.document(uid!!)?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+           // 사진이 실시간으로 변환되는 것을 체크하기 위해서 스냅샷을 받아옴
+            if(documentSnapshot == null )return@addSnapshotListener // 안정성을 위해 데이터 못받았으면 예외처리
+            if(documentSnapshot.data != null){
+                // 정상적일 경우 이미지 주소를 받아오기
+                var url =  documentSnapshot?.data!!["image"] // image 라는 키에 해당하는 값 즉 이미지 주소
+                Glide.with(activity!!).load(url).apply(RequestOptions().circleCrop()).into(fragmentView?.account_iv_profile!!) // circleCrop 이미지의 옵션을 원형으로
+            }
+        }
+    }
+
     // 리사이클러 뷰가 사용할 어댑터
     inner class UserFragmentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         // 컨텐츠 담을 변수 배열

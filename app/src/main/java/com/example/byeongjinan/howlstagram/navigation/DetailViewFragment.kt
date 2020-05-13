@@ -88,7 +88,7 @@ class DetailViewFragment : Fragment() {
             //           holder를 커스텀뷰 홀더로 캐스팅
             var viewholder = (holder as CustomViewHolder).itemView
             // UserId 뷰홀더에서 텍스트 뷰 부분에 dto에 있는 유저 아이디를 가져옴 근데 dtos가 배열이므로 position으로 현재 해당하는 배열 값 가져오기
-            viewholder.detailviewitem_profile_textview.text = contentDTOs!![position].userID
+            viewholder.detailviewitem_profile_textview.text = contentDTOs!![position].userId
 
             // Image 글라이드라는 아까 넣었던 라이브러리를 이용해서 컨텐츠 dto에 있는 이미지 url로 다운로드 받아 viewholder에 해당하는 부분으로 집어넣기
             Glide.with(holder.itemView.context).load(contentDTOs!![position].imageURL)
@@ -124,7 +124,7 @@ class DetailViewFragment : Fragment() {
                 var fragment = UserFragment()
                 var bundle = Bundle()
                 bundle.putString("destinationUid",contentDTOs[position].uid)
-                bundle.putString("UserId",contentDTOs[position].userID)
+                bundle.putString("userId",contentDTOs[position].userId)
                 fragment.arguments = bundle
                 activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_content,fragment)?.commit()
             }

@@ -18,7 +18,7 @@ android:orientation="vertical"
                 android:text="@string/follow"
                 android:layout_toRightOf="@id/account_iv_profile"
                 android:layout_alignParentBottom="true"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="40dp"/>
 <!--        팔로잉과 팔로워와 컨텐츠 갯수를 관리하는 텍스트뷰-->
         <LinearLayout

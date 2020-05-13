@@ -7,7 +7,7 @@ data class ContentDTO(
     var explain: String? = null,
     var imageURL: String? = null,
     var uid: String? = null,
-    var userID: String? = null,
+    var userId: String? = null,
     var timestamp: Long? = null,
     var favoriteCount: Int = 0,
 //    좋아요 버튼 만들기 map -> mutableMap으로 (9장)
@@ -16,7 +16,7 @@ data class ContentDTO(
     // 이 게시글에 달린 덧글을 관리하는 클래스 uid=id userID=이메일? comment 댓글 timestamp 올린 시간
     data class Comment(
         var uid: String? = null,
-        var userID: String? = null,
+        var userId: String? = null,
         var comment: String? = null,
         var timestamp: Long? = null
     )

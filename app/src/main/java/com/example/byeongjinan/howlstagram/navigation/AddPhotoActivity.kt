@@ -90,7 +90,7 @@ class AddPhotoActivity : AppCompatActivity() {
             contentDTO.uid = auth?.currentUser?.uid
 
             // Insert userID
-            contentDTO.userID = auth?.currentUser?.email
+            contentDTO.userId = auth?.currentUser?.email
 
             // Insert explain of content 내용 설명 사용자 입력글과 설명글이 들어감
             contentDTO.explain = addphoto_edit_explain.text.toString()

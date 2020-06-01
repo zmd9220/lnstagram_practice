@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         package="com.example.byeongjinan.howlstagram">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-<!--   6장 사진을 읽기 위해 필요한 권한-->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 6장 사진을 읽기 위해 필요한 권한 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
@@ -12,8 +12,9 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".navigation.AddPhotoActivity"></activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".navigation.CommentActivity"></activity>
+        <activity android:name=".navigation.AddPhotoActivity" />
+        <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

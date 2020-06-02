@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.byeongjinan.howlstagram.LoginActivity
 import com.example.byeongjinan.howlstagram.MainActivity
 import com.example.byeongjinan.howlstagram.R
+import com.example.byeongjinan.howlstagram.navigation.model.AlarmDTO
 import com.example.byeongjinan.howlstagram.navigation.model.ContentDTO
 import com.example.byeongjinan.howlstagram.navigation.model.FollowDTO
 import com.google.firebase.auth.FirebaseAuth
@@ -161,7 +162,8 @@ class UserFragment : Fragment() {
                 followDTO = FollowDTO()
                 followDTO!!.followerCount = 1
                 followDTO!!.followers[currentUserUid!!] = true // 상대방의 계정 맵에 나의 아이디를 넣기
-
+//                최초로 누군가 팔로우 했을때도 이벤트 처리 15
+                followerAlarm(uid!!)
                 transaction.set(tsDocFollower,followDTO!!)
                 return@runTransaction
             }
@@ -174,11 +176,24 @@ class UserFragment : Fragment() {
                 // 안 한 상태 It add my follower when I don't follow a third person 팔로우 추가하기
                 followDTO!!.followerCount = followDTO!!.followerCount + 1
                 followDTO!!.followers[currentUserUid!!] = true
+                // 팔로우 카운트가 올라가면 이벤트 처리 15
+                followerAlarm(uid!!)
             }
             transaction.set(tsDocFollower,followDTO!!)
             return@runTransaction
         }
     }
+    // follow 버튼에 알림 이벤트 넣기 15
+    fun followerAlarm(destinationUid : String){
+        var alarmDTO = AlarmDTO()
+        alarmDTO.destinationUid = destinationUid
+        alarmDTO.userId = auth?.currentUser?.email
+        alarmDTO.uid = auth?.currentUser?.uid
+        alarmDTO.kind = 2
+        alarmDTO.timestamp = System.currentTimeMillis()
+        FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+    }
+
     fun getProfileImage(){
         // 올린 프로필 이미지를 다운받는 기능 12
         firestore?.collection("profileImages")?.document(uid!!)?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->

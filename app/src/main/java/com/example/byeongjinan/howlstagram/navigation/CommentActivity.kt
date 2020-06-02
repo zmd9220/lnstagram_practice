@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.byeongjinan.howlstagram.R
+import com.example.byeongjinan.howlstagram.navigation.model.AlarmDTO
 import com.example.byeongjinan.howlstagram.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,12 +21,15 @@ import kotlinx.android.synthetic.main.item_comment.view.* // 제대로 import �
 // 14 커멘트 액티비티 클래스
 class CommentActivity : AppCompatActivity() {
 
+//    전역변수 추가 15
+    var destinationUid : String? = null
     var contentUid : String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comment)
         // contentUid 라는 인자의(키값으로) 값을 지난 페이지에서 넘겨받아옴
         contentUid = intent.getStringExtra("contentUid")
+        destinationUid = intent.getStringExtra("destinationUid")
 
         // 리사이클러뷰와 어댑터 연결 (클래스 완성후)
         comment_recyclerview.adapter = CommentRecyclerviewAdapter()
@@ -41,8 +45,22 @@ class CommentActivity : AppCompatActivity() {
 
             FirebaseFirestore.getInstance().collection("images").document(contentUid!!).collection("comments").document().set(comment)
 
+            // 커멘트 닫은 부분에 알람이벤트 추가 15
+            commentAlarm(destinationUid!!,comment_edit_message.text.toString())
             comment_edit_message.setText("")
         }
+    }
+    // 코멘트 알람을 알려주는 이벤트 15
+    fun commentAlarm(destinationUid : String, message : String)
+    {
+        var alarmDTO = AlarmDTO()
+        alarmDTO.destinationUid =destinationUid
+        alarmDTO.userId = FirebaseAuth.getInstance().currentUser?.email
+        alarmDTO.uid = FirebaseAuth.getInstance().currentUser?.uid
+//        alarmDTO.kind = 0
+        alarmDTO.timestamp = System.currentTimeMillis()
+        alarmDTO.message = message
+        FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
     }
     inner class CommentRecyclerviewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         var comments : ArrayList<ContentDTO.Comment> = arrayListOf() // 기본 초기화

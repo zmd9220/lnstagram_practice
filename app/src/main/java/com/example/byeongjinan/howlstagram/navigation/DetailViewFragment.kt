@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.byeongjinan.howlstagram.R
+import com.example.byeongjinan.howlstagram.navigation.model.AlarmDTO
 import com.example.byeongjinan.howlstagram.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -159,10 +160,22 @@ class DetailViewFragment : Fragment() {
                     // 안누른 경우 When the button is not clicked 클릭 되는 기능(좋아요 추가 되는 기능)추가
                     contentDTO?.favoriteCount=contentDTO?.favoriteCount+1
                     contentDTO?.favorites[uid!!] = true
+                    // 15 좋아요 버튼이 올라가면서 알림 이벤트를 추가
+                    favoriteAlarm(contentDTOs[position].uid!!)
                 }
                 // 트랜젝션한 결과를 서버에 전송
                 transaction.set(tsDoc,contentDTO)
             }
+        }
+//        15 좋아요 버튼에 알람 기능 추가하기
+        fun favoriteAlarm(destinationUid : String){
+            var alarmDTO = AlarmDTO()
+            alarmDTO.destinationUid = destinationUid
+            alarmDTO.userId = FirebaseAuth.getInstance().currentUser?.email
+            alarmDTO.uid = FirebaseAuth.getInstance().currentUser?.uid
+            alarmDTO.kind = 0
+            alarmDTO.timestamp = System.currentTimeMillis()
+            FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
         }
     }
 }

@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.byeongjinan.howlstagram.R
 import com.example.byeongjinan.howlstagram.navigation.model.AlarmDTO
 import com.google.firebase.auth.FirebaseAuth
@@ -65,11 +67,19 @@ class AlarmFragment : Fragment(){
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 //            종류에 따라 메세지를 다르게 표시할 수 있도록 코드 넣어주기 16
             var view = holder.itemView
+
+            // profile 이미지 가져오기 16 db에서 해당 uid에 맞는 프로파일 이미지 주소를 받아온 뒤, glide로 가져오기
+            FirebaseFirestore.getInstance().collection("profileImages").document(alarmDTOList[position].uid!!).get().addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    var url = task.result!!["image"]
+                    Glide.with(view.context).load(url).apply(RequestOptions().circleCrop()).into(view.commentviewitem_imageview_profile)
+                }
+            }
             // switch 문과 유사한 when 문
             when(alarmDTOList[position].kind){
                 // 0 = like, 1 = comment, 2 = follow
                 0 ->{
-                    var str_0 = alarmDTOList[position].userId + getString(R.string.alarm_favorite)
+                    var str_0 = alarmDTOList[position].userId + " " + getString(R.string.alarm_favorite)
                     view.commentviewitem_textview_profile.text = str_0
                 }
                 1 ->{
@@ -82,6 +92,8 @@ class AlarmFragment : Fragment(){
                     view.commentviewitem_textview_profile.text = str_0
                 }
             }
+            // garbage 텍스트 제거
+            view.commentviewitem_textview_comment.visibility = View.INVISIBLE
         }
 
     }

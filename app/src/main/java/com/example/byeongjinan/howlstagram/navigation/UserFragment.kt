@@ -113,7 +113,7 @@ class UserFragment : Fragment() {
                     fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow_cancel)
                     fragmentView?.account_btn_follow_signout?.background?.setColorFilter(ContextCompat.getColor(activity!!,R.color.colorLightGray),PorterDuff.Mode.MULTIPLY)
                 }else{
-                    fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow)
+//                    fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow)
                     if (uid != currentUserUid) {
                         // 상대방 유저 프래그먼트일 때 백그라운드 컬러를 바꾸도록 - 컬러필터를 날려버림
                         fragmentView?.account_btn_follow_signout?.background?.colorFilter = null

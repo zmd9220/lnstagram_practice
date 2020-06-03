@@ -6,6 +6,7 @@ data class AlarmDTO (
     var userId : String? = null,
     var uid : String? = null,
 //    어떤 타입의 메세지?
+//    1 = comment, 2 = follow, 0 = like
     var kind : Int? = null,
     var message : String? = null,
     var timestamp : Long? = null

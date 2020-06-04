@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_main.*
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         // 8장 메인 화면을 띄우면 DetailViewFragment가 맨 먼저 나올 수 있도록(메인 화면 디폴트) 설정(Default)
         bottom_navigation.selectedItemId = R.id.action_home
+        registerPushToken()
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
@@ -77,6 +79,21 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         toolbar_username.visibility = View.GONE
         toolbar_btn_back.visibility = View.GONE
         toolbar_title_image.visibility = View.VISIBLE
+    }
+
+    // 개별로 푸쉬를 보내기 위한(특정 유저를 나누기 위한) 사용자 별 토큰을 생성 17
+    fun registerPushToken()
+    {
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+            task ->
+            val token = task.result?.token
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            val map = mutableMapOf<String,Any>()
+            map["pushToken"] = token!!
+
+            // db 에다가 해당 uid 의 토큰을 저장
+            FirebaseFirestore.getInstance().collection("pushtokens").document(uid!!).set(map)
+        }
     }
 
     // UserFragment에서 가져온 값대로 실행 (forResult) 12

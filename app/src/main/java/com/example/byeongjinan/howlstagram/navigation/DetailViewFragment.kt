@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.example.byeongjinan.howlstagram.R
 import com.example.byeongjinan.howlstagram.navigation.model.AlarmDTO
 import com.example.byeongjinan.howlstagram.navigation.model.ContentDTO
+import com.example.byeongjinan.howlstagram.navigation.util.FcmPush
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_detail.view.*
@@ -178,6 +179,11 @@ class DetailViewFragment : Fragment() {
             alarmDTO.kind = 0
             alarmDTO.timestamp = System.currentTimeMillis()
             FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+
+            // push message 만들기 18
+            var message = FirebaseAuth.getInstance()?.currentUser?.email + getString(R.string.alarm_favorite)
+            FcmPush.instance.sendMessage(destinationUid,"Howlstagram",message)
+
         }
     }
 }

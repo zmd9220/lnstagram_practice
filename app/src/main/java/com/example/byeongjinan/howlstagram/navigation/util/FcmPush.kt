@@ -12,7 +12,7 @@ class FcmPush {
     var JSON = MediaType.parse("application/json; charset=utf-8") // header 값 생성
     var url = "https://fcm.googleapis.com/fcm/send"
     var serverKey = "AAAAex57Uqk:APA91bHehjkH7uux3tIS5RxOoRCj16ajeN0vn1XYTrqI1KIkULe-T3pBUX2NcOPa1G9C7b9l287ysGIZ-eFmigkr-Brsf8LVMTexjlITTdCNuDvLTjql8wIyMV6yP22mdjpO4wao6w-c"
-
+//    var serverKey = "AIzaSyCGyx5FkyV80MyWfG3w9c29CGXOvbENmUA"
     // gson, okhttp 사용
     var gson : Gson? = null
     var okHttpClient : OkHttpClient? = null
@@ -52,7 +52,7 @@ class FcmPush {
             // 구글 FCM 서버에 이 값을 넘겨주기
             okHttpClient?.newCall(request)?.enqueue(object : Callback{
                 override fun onFailure(call: Call?, e: IOException?) {
-                    TODO("Not yet implemented")
+
                 }
 
                 override fun onResponse(call: Call?, response: Response?) {

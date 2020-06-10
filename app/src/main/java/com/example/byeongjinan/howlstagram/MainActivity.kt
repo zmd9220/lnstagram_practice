@@ -10,6 +10,7 @@ import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.byeongjinan.howlstagram.navigation.*
+import com.example.byeongjinan.howlstagram.navigation.util.FcmPush
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -34,6 +35,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottom_navigation.selectedItemId = R.id.action_home
         registerPushToken()
     }
+
+    // test code
+//    override fun onStop() {
+//        super.onStop()
+//        FcmPush.instance.sendMessage("kZQI7vX8SNX04hDTemTfzhc5snf2","hi","bye")
+//    }
+
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         // 디폴트 값이 기본 아이템 리스트에서 사용하도록 위에 세팅 11

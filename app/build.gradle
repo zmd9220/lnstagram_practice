@@ -14,6 +14,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -46,4 +47,12 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     // 8장 이미지 다운 받을 수 있는 이미지 로더 라이브러리
     implementation 'com.github.bumptech.glide:glide:4.11.0'
+
+    // 18장 서버를 따로 구축할 것이 아니기 때문에 서버역할을 할 안드로이드 라이브러리
+    implementation 'com.squareup.okhttp3:okhttp:3.4.2'
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    // 18장 안드로이드 라이브러리는 기존 8개까지만 사용가능한데 확장시켜주는 라이브러리
+    implementation 'androidx.multidex:multidex:2.0.1'
+
 }
